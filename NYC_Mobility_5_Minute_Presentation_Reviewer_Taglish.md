@@ -1,4 +1,6 @@
-# NYC Mobility Group B - 5-Minute Presentation Reviewer
+# NYC Mobility Group B - Updated 5-Minute Presentation Reviewer
+
+Aligned with the revised 21-slide deck. Slides 18-20 now contain the Data Quality results, retention flow, and dashboard screenshot. Slide 21 provides the closing Data Quality summary.
 
 ## Read This First Tonight
 
@@ -41,13 +43,14 @@ Do not confuse these two totals:
 
 ---
 
-## Important Slide Fixes Before Presenting
+## Important Slide Corrections Before Presenting
 
-1. **Slides 18-20 are blank in the attached PDF.** Insert the Data Quality Dashboard screenshot on slide 18. Use slide 19 for a zoomed view of the top KPIs and violations table. Use slide 20 for the end-to-end PASS/FAIL gate or Databricks task graph.
-2. On the Business Dashboard overview, change “analyzes 133,367 trips” to **“Gold retains 133,367 trips; date-scoped analytics uses 133,348.”** The displayed `133.37K` can round either number, so the subtitle must remove the ambiguity.
-3. On the end-to-end gate slide, write **`failed_checks = 0 -> PASS`** and **`failed_checks > 0 -> FAIL`**. Do not write only `checks = 0`, because the pipeline always evaluates 13 checks.
-4. Rename the borough table on the Weather dashboard. It currently repeats “Average Temperature by Weather Condition.” Use **“Trip Volume and Fare by Borough.”**
-5. Do not explain `Unknown` and `N/A` as GPS or shapefile results. This project uses TLC `LocationID` joined to the Taxi Zone lookup, not a geometry-based spatial join.
+1. Slides 18-20 are now visible and usable. Their correct roles are: **Slide 18: Data Quality Results**, **Slide 19: Data Retention Across Layers**, and **Slide 20: Data Quality Dashboard**. Slide 21 is the closing Data Quality Summary.
+2. On slide 7, write and say **`failed_checks = 0 -> PASS`** and **`failed_checks > 0 -> FAIL`**. The pipeline always evaluates 13 checks, so `checks = 0` is not the correct decision rule.
+3. On slides 14, 18, 19, and 21, describe **4,642 as flag occurrences across the five listed Silver checks**, not as 4,642 distinct affected rows. The exact distinct affected-row count comes from `dq_dashboard_overview.rows_with_any_dq_flag`.
+4. On slide 18, rename **“Clean rows”** to **“Clean record rate.”** The displayed value is a percentage.
+5. On slide 21, explain that all foreign keys resolve to dimension members while 11 trips use the controlled Unknown Weather member. This is why referential integrity can be 100% while Weather completeness is 99.99%.
+6. Do not explain `Unknown` and `N/A` as GPS or shapefile results. The project joins TLC `LocationID` values to the Taxi Zone lookup.
 
 ---
 
@@ -62,9 +65,11 @@ Do not confuse these two totals:
 | 1:45-2:20 | Nella | 12-13 | Silver transformations | Standardization, flags, weather expansion |
 | 2:20-2:55 | Nella | 9 | Gold star schema | Fact in the center and four dimensions |
 | 2:55-3:45 | You | 17 | Business Analytics | Demand, Weather association, mobility patterns |
-| 3:45-4:25 | Nella | 18 | Data Quality Dashboard | 96.53%, integrity, rules and problem areas |
-| 4:25-4:50 | Nella | 7 | End-to-end gate | 13 checks and `ASSERT_TRUE` |
-| 4:50-5:00 | You | 16 or 7 | Closing | Trusted outputs for business and monitoring |
+| 3:45-4:05 | Nella | 18 | Data Quality results | 96.53%, zero-distance flags, missing Weather and integrity |
+| 4:05-4:20 | Nella | 19 | Retention strategy | 133,367 preserved and 133,348 used for date-scoped Analytics |
+| 4:20-4:35 | Nella | 20 | Data Quality Dashboard | KPI cards, violations table and zone anomaly chart |
+| 4:35-4:50 | Nella | 7 | End-to-end gate | 13 checks and `ASSERT_TRUE(failed_checks = 0)` |
+| 4:50-5:00 | You | 21 | Closing | Business-ready outputs with visible quality limitations |
 
 If the timer becomes tight, skip slides 2, 3, 6, 8, 11, and 14 during the main talk. Keep them as backup slides for questions.
 
@@ -118,17 +123,25 @@ If the timer becomes tight, skip slides 2, 3, 6, 8, 11, and 14 during the main t
 
 “Business insights are useful only if users can see the condition of the data, so Nella will close with our Data Quality Dashboard and release gate.”
 
-### Nella - Data Quality Dashboard, Slide 18
+### Nella - Data Quality Results and Retention, Slides 18 and 19
 
-“The dashboard reports a 96.53% clean record rate, 99.99% completeness, 100% uniqueness, 100% referential integrity, and zero critical integrity failures. The largest issue is zero trip distance, with 4,592 flagged rows. We keep flagged rows for traceability instead of hiding them.”
+“Slide 18 summarizes the measured results. We evaluated 133,367 Gold rows and recorded a 96.53% clean record rate. The largest issue is zero trip distance, with 4,592 flagged rows. We also found 30 extreme-distance flags, one invalid-duration flag, 11 missing-Weather coverage flags, and 19 records outside the analysis window.”
 
-“A PASS does not mean every source value is real-world truth. It means the implemented rules, relationships, lineage, and reconciliations passed. Accuracy remains limited because we do not have an independent trip ledger.”
+“The 4,642 shown across the Silver checks represents flag occurrences, not a guaranteed distinct-row count. For the clean rate, the dashboard combines the standard conditions at row level so each affected row is counted once.”
+
+“Slide 19 shows our retention policy. Bronze, Silver, and Gold each contain 133,367 taxi rows, so the row difference is zero. We preserve flagged records in Gold for lineage. Analytics excludes only the 19 records outside the March-May business window, leaving 133,348 in-scope records.”
+
+### Nella - Data Quality Dashboard, Slide 20
+
+“Slide 20 is the monitoring dashboard. It shows the clean rate, completeness, uniqueness, referential integrity, violations by rule, and zone-level anomaly rates. Referential integrity is 100% because missing Weather matches use a controlled Unknown dimension member, while completeness separately reports the 11 missing observations.”
+
+“A PASS means the implemented rules, relationships, lineage, and reconciliations passed. It does not prove that every source value is real-world truth because we do not have an independent trip ledger.”
 
 ### Nella - End-to-end gate, Slide 7
 
 “The final notebook consolidates 13 governed checks across the pipeline. It counts failed checks and calls `ASSERT_TRUE`. If `failed_checks = 0`, the job passes. If any critical check fails, the task stops and the release is blocked.”
 
-### You - Closing
+### You - Closing, Slide 21
 
 “Our final output is therefore both business-ready and auditable: one dashboard explains mobility patterns, while the other explains whether the pipeline data is healthy enough to use. Thank you.”
 
@@ -204,7 +217,7 @@ The landing helper performs the content hash check. Bronze uses `WHERE NOT EXIST
 
 **Do not say:** “Secure because 96.53% clean.” A clean-rate metric does not prove access security.
 
-**Show:** Slide 18 for dashboard trust, slide 7 for enforcement.
+**Show:** Slides 18-20 for dashboard trust, then slide 7 for enforcement.
 
 ## 4. Ano ang challenges na na-encounter ninyo as a group?
 
@@ -526,13 +539,15 @@ Avoid:
 
 ## Final Night-Before Checklist
 
-- Replace blank slides 18-20.
-- Correct the Analytics scope subtitle.
-- Correct `failed_checks = 0` on the gate slide.
-- Rename the borough table title.
+- Confirm slides 18-20 render correctly in presentation mode.
+- Change every “4,642 flagged records” label to “4,642 flag occurrences” unless you replace it with the exact distinct count from `rows_with_any_dq_flag`.
+- Rename “Clean rows” on slide 18 to “Clean record rate.”
+- Correct slide 7 to `failed_checks = 0` for PASS.
+- On slide 21, describe the zone view as pickup-zone anomaly monitoring, not Weather conditions across zones.
+- Confirm the Business Dashboard subtitle distinguishes 133,367 Gold rows from 133,348 date-scoped Analytics rows.
+- Rename the Weather dashboard borough table to “Trip Volume and Fare by Borough.”
 - Confirm the final Databricks pipeline run is green.
 - Open the Business and Data Quality dashboards in separate tabs as live-demo backup.
 - Keep slides 3, 7, 9, 10, 14, and 15 ready for questions.
 - Practice once with a strict five-minute timer.
 - During the presentation, explain the “why,” not every SQL line.
-

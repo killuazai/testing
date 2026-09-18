@@ -1,4 +1,6 @@
-# NYC Mobility Group B - 5-Minute Script Only
+# NYC Mobility Group B - Updated 5-Minute Script Only
+
+Aligned with the revised 21-slide deck, including the visible Data Quality slides 18-20 and summary slide 21.
 
 ## You - Slides 1 and 5
 
@@ -32,9 +34,17 @@
 
 “Business insights are useful only when users can see the condition of the data, so Nella will close with the Data Quality Dashboard.”
 
-## Nella - Slide 18
+## Nella - Slides 18 and 19
 
-“The dashboard reports a 96.53% clean record rate, 99.99% completeness, 100% uniqueness, 100% referential integrity, and zero critical integrity failures. The largest issue is zero trip distance, with 4,592 flagged rows. We keep those rows for traceability instead of hiding them.”
+“We evaluated 133,367 Gold rows and measured a 96.53% clean record rate. The largest issue is zero trip distance, with 4,592 flags. We also recorded 30 extreme-distance flags, one invalid-duration flag, 11 missing-Weather coverage flags, and 19 records outside the analysis window.”
+
+“The 4,642 total shown for the listed Silver checks means flag occurrences, not necessarily 4,642 distinct rows. The clean-rate view combines the standard conditions at row level so each affected row is counted once.”
+
+“Bronze, Silver, and Gold each retain 133,367 taxi rows. Analytics filters only the 19 records outside the March-May scope, leaving 133,348 records for the current business analysis.”
+
+## Nella - Slide 20
+
+“The Data Quality Dashboard shows the clean rate, completeness, uniqueness, referential integrity, violations by rule, and zone-level anomaly rates. Referential integrity remains 100% because missing Weather matches use a controlled Unknown dimension member. Completeness separately reports those 11 missing observations.”
 
 “PASS means our technical rules, relationships, lineage, and reconciliations passed. It does not mean every source value is independently proven.”
 
@@ -42,7 +52,6 @@
 
 “The end-to-end notebook consolidates 13 checks and calls `ASSERT_TRUE`. If `failed_checks = 0`, the job passes. Any failed critical check stops the task and blocks an unhealthy release.”
 
-## You - Closing
+## You - Closing, Slide 21
 
 “Our output is business-ready and auditable: one dashboard explains mobility patterns, while the other explains whether the pipeline data is healthy enough to use. Thank you.”
-
