@@ -58,7 +58,7 @@ Do not confuse these two totals:
 
 | Time | Owner | Slide | Message | What to point at |
 |---|---|---:|---|---|
-| 0:00-0:15 | You | 1 | Project objective | Title and team |
+| 0:00-0:15 | You | 1-2 | Project objective | Title and team |
 | 0:15-0:35 | You | 5 | End-to-end architecture | Source to dashboards flow |
 | 0:35-1:15 | You | 4 | Ingestion protection | HTTP check, deterministic path, SHA-256, metadata |
 | 1:15-1:45 | You | 10 | Bronze incremental load | Monthly row counts, file guard, ingestion log |
