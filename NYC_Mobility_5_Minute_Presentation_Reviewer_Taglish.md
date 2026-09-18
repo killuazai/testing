@@ -81,7 +81,13 @@ If the timer becomes tight, skip slides 2, 3, 6, 8, 11, and 14 during the main t
 
 “Good day. Our project is an end-to-end NYC Green Taxi data pipeline in Databricks. We combined three production sources: Green Taxi trips, the official Taxi Zone lookup, and hourly Open-Meteo weather. Our goal was to preserve the original evidence, transform it into a reliable star schema, and publish both business analytics and data-quality monitoring.”
 
+(Taxi Zone lookup is reference/master data. It answers: “Anong borough at zone ang LocationID 74?” Hindi ito monthly transaction data, so hindi kailangan ng separate March, April, at May versions.
+
+Traffic Advisory is time-varying event data. Nagbabago ang road closures at advisories by date and time. Para i-join sa March–May taxi trips, kailangan complete historical coverage for the same period, with usable timestamps and locations.)
+
 “This diagram shows the full flow. Data enters through Ingestion, passes Bronze, Silver, and Gold validation, then branches into business analytics and data-quality views. The last task is a consolidated quality gate, so the job can stop when a governed check fails.”
+
+(We used SQL CASE expressions to assign PASS or FAIL to 13 governed checks. We summarized them using COUNT_IF(status = 'FAIL'), then enforced the final decision with ASSERT_TRUE(failed_checks = 0). Kapag may kahit isang failed check, Databricks throws an error and marks the final quality-gate task and job run as failed.)
 
 ### You - Ingestion, Slide 4
 
